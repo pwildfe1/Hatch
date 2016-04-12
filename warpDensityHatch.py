@@ -67,7 +67,8 @@ def genHatchX(profile,attPts,strength,ang,gap,min):
                 if length!=0:
                     val = 1-sum/length
                     vec = rs.VectorScale(vecSum,val/length)
-                    divPts[j]=rs.PointAdd(divPts[j],vec*(1-val))
+                    if j!=0 or j!=len(divPts)-1:
+                        divPts[j]=rs.PointAdd(divPts[j],vec*(1-val))
             crv = rs.AddCurve(divPts)
             rs.DeleteObject(crvs[i])
             crvs[i] = crv
@@ -115,7 +116,6 @@ def genHatchY(profile,attPts,strength,ang,gap,min):
             if rs.Distance(attPts[j],close)<strength*2:
                 relevant.append(attPts[j])
         if len(relevant)>0:
-            divPts = rs.DivideCurve(crvs[i],20)
             for j in range(len(divPts)):
                 sum = 0
                 length = 0
@@ -130,7 +130,10 @@ def genHatchY(profile,attPts,strength,ang,gap,min):
                 if length!=0:
                     val = 1-sum/length
                     vec = rs.VectorScale(vecSum,val/length)
-                    divPts[j]=rs.PointAdd(divPts[j],vec*(1-val))
+                    if j!=0 or j!=len(divPts)-1:
+                        divPts[j]=rs.PointAdd(divPts[j],vec*(1-val))
+                        if length>1:
+                            print divPts
             crv = rs.AddCurve(divPts)
             rs.DeleteObject(crvs[i])
             crvs[i] = crv
@@ -169,7 +172,8 @@ def Main():
     angY = rs.GetReal("enter angle of hatch in second direction (degrees)", 40)
     spacingX = rs.GetReal("enter desired spacing of hatch in first direction",6)
     spacingY = rs.GetReal("enter desired spacing of hatch in second direction",6)
-    strength = rs.GetReal("enter desired range for attractor",40)
+    strength = rs.GetReal("enter desired range for attractor",90)
+    
     minX = rs.GetReal("enter minimum spacing in first direction",.1*spacingX)
     minY = rs.GetReal("enter minimum spacing in second direction",.1*spacingY)
     genHatchX(profile,attPts,strength,angX,spacingX,minX)
