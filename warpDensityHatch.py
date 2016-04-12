@@ -67,7 +67,11 @@ def genHatchX(profile,attPts,strength,ang,gap,min):
                 if length!=0:
                     val = 1-sum/length
                     vec = rs.VectorScale(vecSum,val/length)
+<<<<<<< HEAD
                     if j!=0 or j!=len(divPts)-1:
+=======
+                    if j!=0 and j!=len(divPts)-1:
+>>>>>>> 59bfeb7955d50ab4cce208edcc2e618bf867223a
                         divPts[j]=rs.PointAdd(divPts[j],vec*(1-val))
             crv = rs.AddCurve(divPts)
             rs.DeleteObject(crvs[i])
@@ -78,12 +82,9 @@ def genHatchX(profile,attPts,strength,ang,gap,min):
     #see if they lie within the profile (by looking at their midpoint)
     for i in range(len(sections)):
         for j in range(len(sections[i])):
-            if rs.PointInPlanarClosedCurve(rs.CurveMidPoint(sections[i][j]),profile):
-                section = sections[i][j]
-            else:
+            if rs.PointInPlanarClosedCurve(rs.CurveMidPoint(sections[i][j]),profile)==False:
                 rs.DeleteObject(sections[i][j])
             hatch.append(sections[i][j])
-    rs.DeleteObjects(crvs)
     rs.DeleteObject(x)
     return crvs
 
@@ -116,6 +117,10 @@ def genHatchY(profile,attPts,strength,ang,gap,min):
             if rs.Distance(attPts[j],close)<strength*2:
                 relevant.append(attPts[j])
         if len(relevant)>0:
+<<<<<<< HEAD
+=======
+            divPts = rs.DivideCurve(crvs[i],30)
+>>>>>>> 59bfeb7955d50ab4cce208edcc2e618bf867223a
             for j in range(len(divPts)):
                 sum = 0
                 length = 0
@@ -130,10 +135,15 @@ def genHatchY(profile,attPts,strength,ang,gap,min):
                 if length!=0:
                     val = 1-sum/length
                     vec = rs.VectorScale(vecSum,val/length)
+<<<<<<< HEAD
                     if j!=0 or j!=len(divPts)-1:
                         divPts[j]=rs.PointAdd(divPts[j],vec*(1-val))
                         if length>1:
                             print divPts
+=======
+                    if j!=0 and j!=len(divPts)-1:
+                        divPts[j]=rs.PointAdd(divPts[j],vec*(1-val))
+>>>>>>> 59bfeb7955d50ab4cce208edcc2e618bf867223a
             crv = rs.AddCurve(divPts)
             rs.DeleteObject(crvs[i])
             crvs[i] = crv
@@ -141,12 +151,9 @@ def genHatchY(profile,attPts,strength,ang,gap,min):
         sections.append(splitCrv(crvs[i],[profile]))
     for i in range(len(sections)):
         for j in range(len(sections[i])):
-            if rs.PointInPlanarClosedCurve(rs.CurveMidPoint(sections[i][j]),profile):
-                section = sections[i][j]
-            else:
+            if rs.PointInPlanarClosedCurve(rs.CurveMidPoint(sections[i][j]),profile)==False:
                 rs.DeleteObject(sections[i][j])
             hatch.append(sections[i][j])
-    rs.DeleteObjects(crvs)
     rs.DeleteObject(y)
     return crvs
 
@@ -170,7 +177,7 @@ def Main():
     attPts = rs.GetObjects("select points",rs.filter.point)
     angX = rs.GetReal("enter angle of hatch in first direction (degrees)", 30)
     angY = rs.GetReal("enter angle of hatch in second direction (degrees)", 40)
-    spacingX = rs.GetReal("enter desired spacing of hatch in first direction",6)
+    spacingX = rs.GetReal("enter desired spacing of hatch in first direction",5)
     spacingY = rs.GetReal("enter desired spacing of hatch in second direction",6)
     strength = rs.GetReal("enter desired range for attractor",90)
     
