@@ -196,16 +196,18 @@ def Main():
     spacingX = rs.GetReal("enter desired spacing of hatch in first direction",5)
     spacingY = rs.GetReal("enter desired spacing of hatch in second direction",6)
     strength = rs.GetReal("enter desired range for warp",20)
-    strVary = rs.GetReal("enter desired range for vary",30)
+    strVary = rs.GetReal("enter desired range for vary",20)
     minX = rs.GetReal("enter minimum warp spacing in first direction",.1*spacingX)
     minY = rs.GetReal("enter minimum warp spacing in second direction",.1*spacingY)
     varyMin = rs.GetReal("enter minimum grid spacing",.5)
-    step = .5
+    intervalX = 15
+    intervalY = -15
+    step = 1
     gen = 3/step
     allCrvs = []
     for i in range(int(gen)):
-        angX = (angX+10*i)%80
-        angY = (angY-10*i)%80
+        angX = (angX+intervalX*i)%80
+        angY = (angY+intervalY*i)%80
         crvsX = genHatchX(profile,attPts,varyPts,strength,strVary,angX,spacingX,minX,varyMin)
         crvsY = genHatchY(profile,attPts,varyPts,strength,strVary,angY,spacingY,minY,varyMin)
         rs.MoveObjects(crvsX,[0,0,-step*i])
