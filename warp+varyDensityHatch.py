@@ -190,6 +190,15 @@ def splitCrv(profile,splitters):
 def Main():
     profile = rs.GetObject("select profile",rs.filter.curve)
     attPts = rs.GetObjects("select warp hatch pts",rs.filter.point)
+<<<<<<< HEAD
+    varyPts = rs.GetObjects("select vary hatch pts",rs.filter.point)
+    angX = rs.GetReal("enter angle of hatch in first direction (degrees)", 10)
+    angY = rs.GetReal("enter angle of hatch in second direction (degrees)", 40)
+    spacingX = rs.GetReal("enter desired spacing of hatch in first direction",5)
+    spacingY = rs.GetReal("enter desired spacing of hatch in second direction",6)
+    strength = rs.GetReal("enter desired range for warp",20)
+    strVary = rs.GetReal("enter desired range for vary",30)
+=======
     varyPts = rs.GetObjects("slect vary hatch pts",rs.filter.point)
     angX = rs.GetReal("enter angle of hatch in first direction (degrees)", 30)
     angY = rs.GetReal("enter angle of hatch in second direction (degrees)", 40)
@@ -197,9 +206,10 @@ def Main():
     spacingY = rs.GetReal("enter desired spacing of hatch in second direction",6)
     strength = rs.GetReal("enter desired range for warp",50)
     strVary = rs.GetReal("enter desired range for vary",25)
+>>>>>>> eba5cef666fc56284b5602632be21590771b6514
     minX = rs.GetReal("enter minimum warp spacing in first direction",.1*spacingX)
     minY = rs.GetReal("enter minimum warp spacing in second direction",.1*spacingY)
-    varyMin = rs.GetReal("enter minimum grid spacing",.5)
+    varyMin = rs.GetReal("enter minimum grid spacing",.075*spacingX)
     genHatchX(profile,attPts,varyPts,strength,strVary,angX,spacingX,minX,varyMin)
     genHatchY(profile,attPts,varyPts,strength,strVary,angY,spacingY,minY,varyMin)
 
