@@ -23,6 +23,7 @@ def testIntersection(crv01,crv02):
 def genHatchX(profile,attPts,varyPts,strength,strVary,ang,gap,min,varyMin):
     crvs = []
     hatch = []
+    endCrvs = []
     sections = []
     box = rs.BoundingBox(profile)
     start = rs.CurveStartPoint(profile)
@@ -88,7 +89,11 @@ def genHatchX(profile,attPts,varyPts,strength,strVary,ang,gap,min,varyMin):
             rs.DeleteObject(crvs[i])
             crvs[i] = crv
     for i in range(len(crvs)):
+        endCrv = addThickness(crvs[i],3)
+        endCrvs.append(endCrv)
+    for i in range(len(crvs)):
         sections.append(splitCrv(crvs[i],[profile]))
+        sections.append(splitCrv(endCrvs[i],[profile]))
     #The splitCrv creates lists of curves that are then checked to 
     #see if they lie within the profile (by looking at their midpoint)
     for i in range(len(sections)):
@@ -97,7 +102,7 @@ def genHatchX(profile,attPts,varyPts,strength,strVary,ang,gap,min,varyMin):
                 rs.DeleteObject(sections[i][j])
             hatch.append(sections[i][j])
     rs.DeleteObject(x)
-    return hatch
+    return crvs
 
 ##################################
 # GENHATCHY function works the same way as the genHatchX
@@ -106,6 +111,7 @@ def genHatchX(profile,attPts,varyPts,strength,strVary,ang,gap,min,varyMin):
 
 def genHatchY(profile,attPts,varyPts,strength,strVary,ang,gap,min,varyMin):
     crvs = []
+    endCrvs = []
     hatch = []
     sections = []
     varyMin = .25
@@ -163,14 +169,25 @@ def genHatchY(profile,attPts,varyPts,strength,strVary,ang,gap,min,varyMin):
             rs.DeleteObject(crvs[i])
             crvs[i] = crv
     for i in range(len(crvs)):
+        endCrv = addThickness(crvs[i],3)
+        endCrvs.append(endCrv)
+    for i in range(len(crvs)):
         sections.append(splitCrv(crvs[i],[profile]))
+        sections.append(splitCrv(endCrvs[i],[profile]))
     for i in range(len(sections)):
         for j in range(len(sections[i])):
             if rs.PointInPlanarClosedCurve(rs.CurveMidPoint(sections[i][j]),profile)==False:
                 rs.DeleteObject(sections[i][j])
             hatch.append(sections[i][j])
     rs.DeleteObject(y)
-    return hatch
+    return crvs
+
+def addThickness(crv,thick):
+    param = rs.CurveClosestPoint(crv,rs.CurveMidPoint(crv))
+    tan = rs.CurveTangent(crv,param)
+    vec = rs.VectorRotate(tan,90,[0,0,1])
+    crvCopy = rs.CopyObject(crv,vec*thick)
+    return crvCopy
 
 def splitCrv(profile,splitters):
     sects = []
@@ -190,30 +207,18 @@ def splitCrv(profile,splitters):
 def Main():
     profile = rs.GetObject("select profile",rs.filter.curve)
     attPts = rs.GetObjects("select warp hatch pts",rs.filter.point)
-    varyPts = rs.GetObjects("slect vary hatch pts",rs.filter.point)
+    varyPts = rs.GetObjects("select vary hatch pts",rs.filter.point)
     angX = rs.GetReal("enter angle of hatch in first direction (degrees)", 30)
     angY = rs.GetReal("enter angle of hatch in second direction (degrees)", 40)
-    spacingX = rs.GetReal("enter desired spacing of hatch in first direction",4)
-    spacingY = rs.GetReal("enter desired spacing of hatch in second direction",4)
-    strength = rs.GetReal("enter desired range for warp",20)
-    strVary = rs.GetReal("enter desired range for vary",20)
+    spacingX = rs.GetReal("enter desired spacing of hatch in first direction",10)
+    spacingY = rs.GetReal("enter desired spacing of hatch in second direction",10)
+    strength = rs.GetReal("enter desired range for warp",30)
+    strVary = rs.GetReal("enter desired range for vary",300)
     minX = rs.GetReal("enter minimum warp spacing in first direction",.1*spacingX)
     minY = rs.GetReal("enter minimum warp spacing in second direction",.1*spacingY)
-    varyMin = rs.GetReal("enter minimum grid spacing",.5)
-    intervalX = 10
-    intervalY = -10
-    step = 1.5
-    gen = 6/step
-    allCrvs = []
-    for i in range(int(gen)):
-        angX = (angX+intervalX*i)%80
-        angY = (angY+intervalY*i)%80
-        crvsX = genHatchX(profile,attPts,varyPts,strength,strVary,angX,spacingX,minX,varyMin)
-        crvsY = genHatchY(profile,attPts,varyPts,strength,strVary,angY,spacingY,minY,varyMin)
-        rs.MoveObjects(crvsX,[0,0,-step*i])
-        rs.MoveObjects(crvsY,[0,0,-step*i])
-        allCrvs.extend(crvsX)
-        allCrvs.extend(crvsY)
-    return allCrvs
+    varyMin = rs.GetReal("enter minimum grid spacing",.1*spacingX)
+    rs.EnableRedraw(False)
+    genHatchX(profile,attPts,varyPts,strength,strVary,angX,spacingX,minX,varyMin)
+    genHatchY(profile,attPts,varyPts,strength,strVary,angY,spacingY,minY,varyMin)
 
 Main()
